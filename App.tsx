@@ -1,11 +1,11 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 import {store} from './redux/store';
-import Main from './app/Main';
+import AppLoader from './app/AppLoader';
 
 const App = () => (
   <Provider store={store}>
-    <Main />
+    <AppLoader />
   </Provider>
 );
 
