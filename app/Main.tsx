@@ -11,14 +11,10 @@ import {
   Keyboard,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import {useDispatch} from 'react-redux';
-import {LOAD_FILE_REQUEST} from '../redux/actions';
-import {database} from '../database';
 import Item from '../model/Item';
+import {findItemByName} from '../services/itemService';
 
 const Main = () => {
-  const dispatch = useDispatch();
-
   const [searchId, setSearchId] = useState('');
   const [foundItem, setFoundItem] = useState<Item | null>(null);
   const [error, setError] = useState('');
@@ -26,26 +22,23 @@ const Main = () => {
   const [showName, setShowName] = useState(true);
   const [showValue, setShowValue] = useState(true);
 
-  useEffect(() => {
-    dispatch({type: LOAD_FILE_REQUEST});
-  }, [dispatch]);
-
+  const reset = () => {
+    setSearchId('');
+    setError('');
+    setFilter(false);
+    setShowName(true);
+    setShowValue(true);
+  };
   const searchItemById = async () => {
     setError('');
     Keyboard.dismiss();
 
     try {
-      const itemCollection = database.get<Item>('items');
-      const results = await itemCollection.query().fetch();
-
-      const item = results.find(i => i.name === searchId.trim());
+      const item = await findItemByName(searchId.trim());
 
       if (item) {
         setFoundItem(item);
-        setSearchId('');
-        setFilter(false);
-        setShowName(true);
-        setShowValue(true);
+        reset();
       } else {
         setFoundItem(null);
         Alert.alert('Error', 'Item not found, try again');
