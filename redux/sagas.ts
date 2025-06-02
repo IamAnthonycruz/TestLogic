@@ -1,6 +1,6 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
 import {database} from '../database';
-import {mockFileData} from '../utils/mockFile';
+const mockFileData = require('../utils/mockFileData.json');
 import Item from '../model/Item';
 import {
   LOAD_FILE_FAILURE,
