@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {SafeAreaView, TextInput, Button, Text, View, Alert} from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
 import {useDispatch} from 'react-redux';
 import {LOAD_FILE_REQUEST} from '../redux/actions';
 import {database} from '../database';
@@ -12,7 +13,9 @@ const Main = () => {
   const [foundItem, setFoundItem] = useState<Item | null>(null);
   const [error, setError] = useState('');
 
-  // 🔁 Dispatch saga to load mockFileData.json on mount
+  const [showName, setShowName] = useState(true);
+  const [showValue, setShowValue] = useState(true);
+
   useEffect(() => {
     dispatch({type: LOAD_FILE_REQUEST});
   }, [dispatch]);
@@ -77,9 +80,37 @@ const Main = () => {
 
       {foundItem && (
         <View style={{marginTop: 20}}>
+          <Text style={{fontWeight: 'bold', marginBottom: 10}}>
+            Select Fields to Show:
+          </Text>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 5,
+            }}>
+            <CheckBox value={showName} onValueChange={setShowName} />
+            <Text style={{marginLeft: 8}}>Name</Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 5,
+            }}>
+            <CheckBox value={showValue} onValueChange={setShowValue} />
+            <Text style={{marginLeft: 8}}>Value</Text>
+          </View>
+        </View>
+      )}
+
+      {foundItem && (
+        <View style={{marginTop: 20}}>
           <Text>ID: {foundItem.id}</Text>
-          <Text>Name: {foundItem.name}</Text>
-          <Text>Value: {foundItem.value}</Text>
+          {showName && <Text>Name: {foundItem.name}</Text>}
+          {showValue && <Text>Value: {foundItem.value}</Text>}
         </View>
       )}
 
