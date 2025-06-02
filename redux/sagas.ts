@@ -11,22 +11,18 @@ import {
 function* loadFileSaga() {
   try {
     const itemCollection = database.get<Item>('items');
-    yield call(() =>
-      database.action(async () => {
-        console.log('inside database.action');
-        for (let item of mockFileData) {
-          console.log('Creating', item);
-          await itemCollection.create(record => {
-            record.name = item.name;
-            record.value = item.value;
-          });
-        }
-      }),
-    );
-
+    yield call([database, database.write], async () => {
+      for (let item of mockFileData) {
+        await itemCollection.create(record => {
+          record.name = item.name;
+          record.value = item.value;
+        });
+      }
+    });
     yield put({type: LOAD_FILE_SUCCESS});
-  } catch (error) {
-    yield put({type: LOAD_FILE_FAILURE});
+  } catch (e) {
+    console.error('Load File Error:', e);
+    yield put({type: LOAD_FILE_FAILURE, error: e});
   }
 }
 
