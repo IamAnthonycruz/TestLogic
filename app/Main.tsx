@@ -1,5 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {SafeAreaView, TextInput, Button, Text, View, Alert} from 'react-native';
+import {
+  SafeAreaView,
+  TextInput,
+  Button,
+  Text,
+  View,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {useDispatch} from 'react-redux';
 import {LOAD_FILE_REQUEST} from '../redux/actions';
@@ -30,6 +39,7 @@ const Main = () => {
 
       if (item) {
         setFoundItem(item);
+        setSearchId('');
       } else {
         setFoundItem(null);
         setError('Item not found');
@@ -40,43 +50,32 @@ const Main = () => {
     }
   };
 
-  const clearDatabase = async () => {
-    try {
-      const itemCollection = database.get<Item>('items');
-      const allItems = await itemCollection.query().fetch();
-
-      await database.write(async () => {
-        for (const item of allItems) {
-          await item.markAsDeleted();
-          await item.destroyPermanently();
-        }
-      });
-
-      setFoundItem(null);
-      setSearchId('');
-      setError('');
-      Alert.alert('Success', 'Database cleared successfully');
-      console.log('✅ All items deleted');
-    } catch (e) {
-      console.error('❌ Error clearing DB:', e);
-      Alert.alert('Error', 'Failed to clear database');
-    }
-  };
-
   return (
-    <SafeAreaView style={{padding: 20}}>
-      <TextInput
-        placeholder="Enter item name"
-        value={searchId}
-        onChangeText={setSearchId}
+    <SafeAreaView style={{padding: 20, flex: 1}}>
+      <View
         style={{
-          borderWidth: 1,
-          borderColor: '#ccc',
-          padding: 10,
-          marginBottom: 10,
-        }}
-      />
-      <Button title="Search" onPress={searchItemById} />
+          marginVertical: 40,
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+        }}>
+        <TextInput
+          placeholder="Enter ID name"
+          value={searchId}
+          onChangeText={setSearchId}
+          style={{
+            borderWidth: 1,
+            borderColor: '#ccc',
+            padding: 10,
+            marginBottom: 10,
+            borderRadius: 20,
+            width: '90%',
+          }}
+        />
+        <TouchableOpacity style={styles.button} onPress={searchItemById}>
+          <Text style={{color: 'white'}}>Search ID</Text>
+        </TouchableOpacity>
+      </View>
 
       {foundItem && (
         <View style={{marginTop: 20}}>
@@ -107,20 +106,41 @@ const Main = () => {
       )}
 
       {foundItem && (
-        <View style={{marginTop: 20}}>
-          <Text>ID: {foundItem.id}</Text>
-          {showName && <Text>Name: {foundItem.name}</Text>}
-          {showValue && <Text>Value: {foundItem.value}</Text>}
+        <View>
+          <Text style={{fontWeight: 'bold', fontSize: 20, marginTop: 10}}>
+            Results:
+          </Text>
+          <View
+            style={{
+              marginTop: 20,
+              borderWidth: 1,
+              borderColor: 'black',
+              padding: 20,
+              borderRadius: 20,
+            }}>
+            <Text style={{fontSize: 15}}>ID: {foundItem.id}</Text>
+            {showName && (
+              <Text style={{fontSize: 15}}>Name: {foundItem.name}</Text>
+            )}
+            {showValue && (
+              <Text style={{fontSize: 15}}>Value: {foundItem.value}</Text>
+            )}
+          </View>
         </View>
       )}
 
       {!!error && <Text style={{marginTop: 20, color: 'red'}}>{error}</Text>}
-
-      <View style={{marginTop: 30}}>
-        <Button title="Clear Database" color="red" onPress={clearDatabase} />
-      </View>
     </SafeAreaView>
   );
 };
 
 export default Main;
+const styles = StyleSheet.create({
+  button: {
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: 'red',
+    padding: 10,
+    backgroundColor: 'red',
+  },
+});
