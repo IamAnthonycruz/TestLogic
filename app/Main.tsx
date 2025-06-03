@@ -13,7 +13,7 @@ import {findItemByName} from '../services/itemService';
 import SearchInput from '../components/SearchInput';
 import FiltersPanel from '../components/FilterPanel';
 import ResultDisplay from '../components/ResultDisplay';
-
+import Icon from '@react-native-vector-icons/evil-icons';
 const Main = () => {
   const [searchId, setSearchId] = useState('');
   const [foundItem, setFoundItem] = useState<Item | null>(null);
@@ -62,7 +62,10 @@ const Main = () => {
 
       {foundItem && (
         <View style={styles.textFilter}>
-          <TouchableOpacity onPress={() => setFilter(!filter)}>
+          <TouchableOpacity
+            onPress={() => setFilter(!filter)}
+            style={{flexDirection: 'row-reverse'}}>
+            <Icon name="pencil" size={30} color={'red'} />
             <Text style={styles.filterText}>Filters</Text>
           </TouchableOpacity>
         </View>
@@ -72,8 +75,8 @@ const Main = () => {
         <FiltersPanel
           showName={showName}
           showValue={showValue}
-          onToggleShowName={() => setShowName(showName)}
-          onToggleShowValue={() => setShowValue(showValue)}
+          onToggleShowName={() => setShowName(!showName)}
+          onToggleShowValue={() => setShowValue(!showValue)}
         />
       )}
 
@@ -94,7 +97,6 @@ export default Main;
 
 const styles = StyleSheet.create({
   filterText: {
-    textAlign: 'right',
     color: 'red',
     fontSize: 20,
     fontWeight: 'bold',
@@ -110,5 +112,7 @@ const styles = StyleSheet.create({
   },
   textFilter: {
     marginTop: 10,
+
+    flexDirection: 'row-reverse',
   },
 });

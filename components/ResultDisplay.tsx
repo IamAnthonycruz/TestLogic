@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   resultText: {
-    fontSize: 15,
+    fontSize: 18,
+    fontStyle: 'italic',
   },
 });
 
